@@ -1,0 +1,25 @@
+# Sample / Template
+
+alias d0 device0
+alias d1 device1
+alias d2 device2
+alias d3 device3
+alias d4 device4
+alias d5 device5
+
+init:
+#examples
+define bob 1
+alias bruce r0 
+
+
+start:
+yield
+
+# do the things
+
+
+
+j start 
+
+

@@ -1,0 +1,30 @@
+# Gas cooling
+
+alias d0 gastank0
+alias d1 digivalve0
+alias d2 gastank1
+alias d3 digivalve1
+alias d4 gastank2
+alias d5 digivalve2
+
+init:
+#examples
+# try for 10deg C - 8-12C range
+define maxtemp 285
+define mintemp 281
+
+
+#define bob 1
+#alias bruce r0 
+
+
+start:
+yield
+
+# do the things
+
+
+
+j start 
+
+
