@@ -9,9 +9,9 @@ alias d5 digivalve2
 
 init:
 #examples
-# try for 10deg C - 8-12C range
-define maxtemp 285
-define mintemp 281
+# try for 10deg C - 10-25C range
+define maxtemp 298
+define mintemp 283
 alias tankptr r10
 
 alias tank0temp r0
