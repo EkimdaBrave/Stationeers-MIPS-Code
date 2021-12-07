@@ -1,0 +1,54 @@
+#Solar Tracking 2021
+
+alias Sensor d0
+alias Panel d1
+alias HeavyPanel d2
+alias H r0
+alias V r1
+alias O r2
+alias x r3
+alias y r4
+alias z r5
+alias PanelHash r6
+alias HeavyPanelHash r7
+move O 0
+move y 0
+s db Setting 0
+setup:
+yield
+jal readSensor
+blt V 10 setup
+s Panel Vertical V
+s Panel Horizontal H
+l x Panel Horizontal
+mod x x 360
+sub x x H
+abs x x
+s db Setting x
+bgt x 2 setup
+l x Panel Charge
+brle x y 3
+move y x
+move z O
+add O O 90
+blt O 360 setup
+move O z
+s db Setting O
+l PanelHash Panel PrefabHash
+l HeavyPanelHash HeavyPanel PrefabHash
+loop:
+yield
+jal readSensor
+sb PanelHash Vertical V
+sb PanelHash Horizontal H
+sb HeavyPanelHash Vertical V
+sb HeavyPanelHash Horizontal H
+j loop
+readSensor:
+l V Sensor Vertical
+sub V 75 V
+div V V 1.5
+l H Sensor Horizontal
+add H H O
+mod H H 360
+j ra
