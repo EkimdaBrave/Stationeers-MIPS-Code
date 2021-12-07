@@ -12,14 +12,26 @@ init:
 # try for 10deg C - 8-12C range
 define maxtemp 285
 define mintemp 281
+alias tankptr r10
 
-
-#define bob 1
-#alias bruce r0 
-
+alias tank0temp r0
+alias tank0press r1
+alias tank1temp r2
+alias tank1press r3
+alias tank2temp r4
+alias tank2press r5
 
 start:
 yield
+
+
+
+l pressure r(r10)
+l temp r(r11)
+
+
+
+if 
 
 # do the things
 
