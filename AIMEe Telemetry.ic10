@@ -1,0 +1,32 @@
+# AIMEe Telemetry
+# Ekimdabrave 2021
+alias robot d0
+alias XDisp d1
+alias YDisp d2
+alias ZDisp d3
+alias BattDisp d4
+alias ModeDisp d5
+
+alias currentX r0
+alias currentY r1
+alias currentZ r2
+alias charge r3
+alias opMode r4
+alias cargo r5
+alias lowBattery r9
+s BattDisp Mode 1
+
+loop:
+l currentX robot PositionX
+l currentY robot PositionY
+l currentZ robot PositionZ
+ls charge robot 0 ChargeRatio
+l opMode robot Mode
+
+s XDisp Setting currentX
+s YDisp Setting currentY
+s ZDisp Setting currentZ
+s BattDisp Setting charge
+s ModeDisp Setting opMode
+yield
+j loop
