@@ -1,0 +1,40 @@
+# Atmo Tank Cooling DV | Radiators
+
+alias tank1 d0 
+alias dv1 d1
+alias filt1 d2
+#alias tank2 d3
+#alias dv2 d4
+#alias filt2 d5
+
+alias temp r1
+alias pres r2
+alias idealtemp r3
+alias adjpres r4
+
+init:
+define MINTEMP 263
+define MAXTEMP 269
+define OVERSHOOT 2
+# set idealtemp as the midpoint of min and max
+add r0 MINTEMP MAXTEMP
+div idealtemp r0 2
+
+start: 
+yield
+
+#read temp tank1
+l temp tank1 Temperature
+#l temp2 tank2 Temperature 
+
+cooling:
+l r0 dv1 On
+mul r0 r0 OVERSHOOT
+sub r0 MAXTEMP r0
+sgt r0 temp r0
+s dv1 On r0
+#sb -1721846327 On r0
+
+j start
+
+
