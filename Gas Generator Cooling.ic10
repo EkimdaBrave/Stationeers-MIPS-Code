@@ -1,0 +1,87 @@
+# Gaz Generator - WiP
+# 2021-12-13 17:20:01
+# N.B. Start|Stop is triggered from a separate
+# IC Housing
+# Europa - using outside atmo and active vents
+# for cooling
+
+alias GasGen d0
+alias Sensor d1
+alias FuelPump d2
+alias AVIn d3
+alias AVOut d4
+alias BattICH d5
+
+alias ratio r1
+alias temp r2
+alias idealtemp r3
+alias adjpres r4
+alias fuel r5
+alias Ergs r6
+
+define MINTEMP 283
+define MAXTEMP 293
+define OVERSHOOT 4
+define offLevel 0.95
+define onLevel 0.2
+init:
+s AVIn Mode 0
+s AVOut Mode 1
+s AVIn PressureExternal 150
+s AVOut PressureExternal 80
+
+s FuelPump Setting 1
+#s FuelPump On 1
+# set idealtemp as the midpoint of min and max
+add r0 MINTEMP MAXTEMP
+div idealtemp r0 2
+
+start:
+#l r1 Batt ChargeRatio
+l temp Sensor Temperature
+l Ergs GasGen PowerGeneration
+sb -815193061 Setting Ergs
+cooling:
+bdns AVIn heating
+l r0 AVIn On
+mul r0 r0 OVERSHOOT
+sub r0 MAXTEMP r0
+sgt r0 temp r0
+#s cooler On r0
+s AVIn On r0
+s AVOut On r0
+
+heating:
+#bdns heater ventilation
+lb r0 24258244 On 1
+mul r0 r0 OVERSHOOT
+add r0 MINTEMP r0
+slt r0 temp r0
+sb 24258244 On r0
+
+generator:
+l ratio BattICH Setting
+#s db Setting ratio
+#ls fuel GasGen 0 Quantity
+#s db Setting fuel
+
+#blt ratio onLevel furnaceOn
+#bgt ratio offLevel furnaceOff
+
+bgtz ratio furnaceOn
+beqz ratio furnaceOff
+j end
+
+furnaceOn:
+s FuelPump On 1
+s GasGen On 1
+j end
+
+furnaceOff:
+s FuelPump On 0
+s GasGen On 0
+j end
+
+end:
+yield
+j start

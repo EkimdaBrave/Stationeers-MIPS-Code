@@ -24,14 +24,13 @@ alias tank2press r5
 start:
 yield
 
+loop:
+# increment r10 and use it for ref: rr10
 
 
-l pressure r(r10)
-l temp r(r11)
+l pressure rr10
+l temp rr11
 
-
-
-if 
 
 # do the things
 
