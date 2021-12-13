@@ -87,6 +87,7 @@ panic:
 # shut off all connected devices
 move r0 6
 panicloop:
+yield 
 sub r0 r0 1
 beqz r0 start
 bdns dr0 panicloop
