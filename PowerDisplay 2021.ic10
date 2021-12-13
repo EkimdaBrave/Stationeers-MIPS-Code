@@ -1,0 +1,47 @@
+#PowerDisplay  2021
+#  <Author>Ekimdabrave</Author>
+# I'm not 100% sure how this works, but you're smart, you'll figure it out...
+alias HeavyPanel d0
+alias SolarPanel d1
+alias CableAnalyser d2
+alias SolarProdlDisp d3
+alias PwrDemandDisp d4
+alias TotalProdDisp d5
+
+alias HeavyPanelHash r6
+alias SolarPanelHash r7
+
+alias HSolarProd r0
+alias SolarProd r1
+alias TotalPanelPwr r2
+alias TotalProd r3
+alias PwrDemand r4
+
+setup:
+yield
+l SolarPanelHash SolarPanel PrefabHash
+l HeavyPanelHash HeavyPanel PrefabHash
+s SolarProdlDisp Mode 2
+s PwrDemandDisp Mode 2
+s TotalProdDisp Mode 2
+
+loop:
+yield
+jal readSensor
+s SolarProdlDisp Setting SolarProd
+s PwrDemandDisp Setting PwrDemand
+s TotalProdDisp Setting TotalProd
+yield
+j loop
+
+readSensor:
+l TotalProd CableAnalyser PowerActual
+l PwrDemand CableAnalyser PowerRequired
+lb HSolarProd HeavyPanelHash Charge 0
+mul HSolarProd HSolarProd 20
+lb SolarProd SolarPanelHash Charge 0
+mul  SolarProd SolarProd  10
+add SolarProd SolarProd HSolarProd
+#div SolarProd SolarProd 2
+#yield
+j ra

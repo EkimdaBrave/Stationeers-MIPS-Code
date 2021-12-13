@@ -1,0 +1,33 @@
+#Fridge Decay Display</Title>
+#Reads  each  slot from a fridge  and displays the  Hash, Quantity,  Damage % and an LED Slide​
+#<Author>Ekimdabrave</Author>
+alias VendM d0
+alias SlotDisp d1
+alias DmgDisp d2
+alias QuantDisp d3
+alias DiodeDisp d4
+alias Dial d5
+init:
+move r0 1
+s QuantDisp Mode 0
+s DmgDisp Mode 1
+s DiodeDisp On 1
+start:
+yield
+ls r4 VendM r0 Occupied
+beqz r4 next
+s SlotDisp Setting r0
+ls r1 VendM r0 OccupantHash
+s db Setting r1
+ls r2 VendM r0 Damage
+s DmgDisp Setting r2
+sub r2 1 r2
+s DiodeDisp Setting r2
+ls r3 VendM r0 Quantity
+s QuantDisp Setting r3
+sleep 2
+next:
+beq r0 14 init
+add r0 r0 1
+
+j start

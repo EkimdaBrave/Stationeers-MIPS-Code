@@ -1,0 +1,64 @@
+#Freighter Waiter</Title>
+#Cargo Delivery Between Levels​
+#  <Author>Ekimdabrave</Author>
+# Freighter Waiter 2021-05-23 11:56:04
+alias L1Dial d0
+alias L2Dial d1
+alias L3Dial d2
+alias L1Sort d3
+alias L2Sort d4
+alias L3Sort d5
+
+define LEDHash -815193061
+define DialHash 554524804
+define ButtHash 491845673
+define SorterHash -1009150565
+
+init:
+sb SorterHash Mode 2
+sb LEDHash Mode 0
+sb LEDHash On 1
+move r4 0
+sb DialHash Setting r4
+sb LEDHash Setting r4
+
+start:
+yield
+sb SorterHash Output 0
+# read dials. if one is diff to 'r4' then set r4 to dial x
+l r1 L1Dial Setting
+breq r1 r4 4
+move r4 r1
+sb LEDHash Setting r4
+sb DialHash Setting r4
+l r2 L2Dial Setting
+breq r2 r4 4
+move r4 r2
+sb LEDHash Setting r4
+sb DialHash Setting r4
+l r3 L3Dial Setting
+breq r3 r4 4
+move r4 r3
+sb LEDHash Setting r4
+sb DialHash Setting r4
+
+# select which Sorter to open
+beq r4 1 L1Drop
+beq r4 2 L2Drop
+beq r4 3 L3Drop
+j start
+
+L1Drop:
+#ls r5 L1Sort 0 Occupied
+s L1Sort Output 1
+j start
+
+L2Drop:
+#ls r5 L2Sort 0 Occupied
+s L2Sort Output 1
+j start
+
+L3Drop:
+#ls r5 L3Sort 0 Occupied
+s L3Sort Output 1
+j start

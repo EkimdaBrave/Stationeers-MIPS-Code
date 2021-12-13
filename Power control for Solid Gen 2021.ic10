@@ -1,0 +1,42 @@
+# Power control for Solid Gen 2021
+#  <Author>Ekimdabrave</Author>
+alias generator d0
+alias batteries d1
+alias ActiveVent d2
+alias Diode d3
+alias BattDisp d4
+alias BattHash r6
+l BattHash d1 PrefabHash
+s BattDisp Mode 1
+alias ratio r0
+alias fuel r1
+
+define offLevel 0.95
+define onLevel 0.2
+main:
+#l ratio batteries Ratio
+lb ratio BattHash Ratio 0
+s BattDisp Setting ratio
+ls fuel generator 0 Quantity
+s db Setting fuel
+
+blt ratio onLevel furnaceOn
+bgt ratio offLevel furnaceOff
+j end
+
+furnaceOn:
+s generator On 1
+s Diode On 1
+s ActiveVent Mode 1
+s ActiveVent On 1
+j end
+
+furnaceOff:
+s generator On 0
+s Diode On 0
+s ActiveVent On 0
+j end
+
+end:
+yield
+j main

@@ -1,0 +1,55 @@
+#ekim-stopwatch v1.0
+# this uses the 'stopwatch' from 'Kit - Music MAchine' as it's time source
+# Stopwatch
+alias SW d0
+alias SWButton d1
+alias HRDisp d2
+alias MINDisp d3
+alias SECDisp d4
+alias DAYDisp d5
+
+alias time r0
+alias hr r1
+alias min r2
+alias sec r3
+alias resetbutton r5
+alias minBool r6
+alias secBool r7
+sb -815193061 Mode 0
+
+init:
+s SW On 0
+sleep 1
+s SW On 1
+s SW Activate 1
+
+#move sec 0
+move min 0
+move hr 0
+
+start:
+l time SW Time
+
+#SEC
+trunc sec time
+mod sec sec 60
+#mul r7 min 60
+#sub sec sec r7
+s SECDisp Setting sec
+
+#MIN
+div min time 60
+trunc min min
+mod min min 60
+s MINDisp Setting min
+
+#Hours
+div hr time 3600
+trunc hr hr
+s HRDisp Setting hr
+
+#reset
+l resetbutton SWButton Activate
+bnez r5 init
+yield
+j start

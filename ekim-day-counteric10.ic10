@@ -1,0 +1,38 @@
+#ekim-day-counter
+# look in your savegame XML file and set the start day manually​
+# Day Counter
+alias SW d0
+alias DaySensor d1
+alias DAYDisp d2
+
+alias day r0
+alias daylight r1
+alias dlBool r2
+alias dayBool r8
+
+init:
+#set start day offset
+move day 31
+move dlBool 1
+s db Setting dlBool
+
+start:
+l daylight DaySensor Activate
+brnez dlBool 2
+bneal daylight dlBool count
+beqzal daylight reset
+s DAYDisp Setting day
+
+yield
+j start
+
+count:
+add day day 1
+move dlBool 1
+s db Setting dlBool
+j ra
+
+reset:
+move dlBool 0
+s db Setting dlBool
+j ra

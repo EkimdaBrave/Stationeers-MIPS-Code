@@ -1,0 +1,25 @@
+#Rocket Telemetry
+#Ekimdabrave
+# Auto Rocket Telemetry v0.1
+# 2021-03-21 14:52:34
+alias ARAutoModule d0
+alias ARSilo d1
+alias ARModeDisp d2
+alias ARFuelDisp d3
+alias ARCollDisp d4
+alias ARStorDisp d5
+
+
+loop:
+#read
+yield
+l r0 ARAutoModule Mode
+l r1 ARAutoModule Fuel
+l r2 ARAutoModule CollectableGoods
+l r3 ARSilo Quantity
+#write
+s ARModeDisp Setting r0
+s ARFuelDisp Setting r1
+s ARCollDisp Setting r2
+s ARStorDisp Setting r3
+j loop

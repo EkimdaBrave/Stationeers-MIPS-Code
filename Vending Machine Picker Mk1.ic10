@@ -1,0 +1,47 @@
+# Vending Machine Picker Mk1
+#  <Author>Ekimdabrave</Author>
+# This uses logic to dump all of one type of ore from a Vending machine
+alias VendM d0
+#alias SlotDisp d1
+alias Dial d2
+alias Lever d3
+
+define IRON 1758427767
+define COAL 1724793494
+define COPPER -707307845
+define NICKEL 1830218956
+define SILICON 1103972403
+define LEAD -190236170
+define SILVER -916518678
+define COBALT -983091249
+define GOLD -1348105509
+
+init:
+move r0 IRON
+move r1 COAL
+move r2 COPPER
+move r3 GOLD
+move r4 SILICON
+move r5 LEAD
+move r6 SILVER
+move r7 COBALT
+move r8 NICKEL
+
+start:
+yield
+#readdial:
+l r10 Dial Setting
+move r14 rr10
+s db Setting r14
+
+readbutton:
+l r11 Lever Setting
+beqz r11 start
+
+grabit:
+s VendM RequestHash r14
+ls r12 VendM 1 OccupantHash
+bne r12 r14 -2
+s VendM Activate 1
+
+j start

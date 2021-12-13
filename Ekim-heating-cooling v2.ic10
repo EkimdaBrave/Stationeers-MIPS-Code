@@ -1,0 +1,94 @@
+#Ekim-heating-cooling v2
+alias sensor d0
+alias cooler d1
+alias heater d2
+#alias N2pump d3
+#alias O2pump d4
+#alias CO2pump d5
+
+alias temp r1
+alias pres r2
+alias idealtemp r3
+alias adjpres r4
+
+# Make sure MINTEMP and MAXTEMP are more
+# than OVERSHOOT apart from each other!
+define MINTEMP 263
+define MAXTEMP 269
+define OVERSHOOT 2
+
+# Under MINPRES, controller shuts down everything
+define MINPRES 5
+define TARGETN2 80
+define TARGETO2 18
+define TARGETCO2 7
+
+init:
+# set idealtemp as the midpoint of min and max
+add r0 MINTEMP MAXTEMP
+div idealtemp r0 2
+
+start:
+yield
+l pres sensor Pressure
+l temp sensor Temperature
+
+pressureCheck:
+slt r0 pres MINPRES
+bnez r0 panic
+
+cooling:
+#bdns cooler heating
+l r0 cooler On
+#lb r0 -1721846327 On 0
+mul r0 r0 OVERSHOOT
+sub r0 MAXTEMP r0
+sgt r0 temp r0
+s cooler On r0
+#sb -1721846327 On r0
+
+heating:
+#bdns heater ventilation
+l r0 heater On
+#lb r0 24258244 On 0
+mul r0 r0 OVERSHOOT
+add r0 MINTEMP r0
+slt r0 temp r0
+s heater On r0
+#sb 24258244 On r0
+
+j start
+
+ventilation:
+div r0 idealtemp temp
+mul adjpres r0 pres
+n2:
+beqz TARGETN2 o2
+l r0 sensor RatioNitrogen
+mul r0 r0 adjpres
+slt r0 r0 TARGETN2
+s N2pump On r0
+o2:
+beqz TARGETO2 co2
+l r0 sensor RatioOxygen
+mul r0 r0 adjpres
+slt r0 r0 TARGETO2
+s O2pump On r0
+co2:
+beqz TARGETCO2 start
+l r0 sensor RatioCarbonDioxide
+mul r0 r0 adjpres
+slt r0 r0 TARGETCO2
+s CO2pump On r0
+
+j start
+
+panic:
+# shut off all connected devices
+move r0 6
+panicloop:
+sub r0 r0 1
+beqz r0 start
+bdns dr0 panicloop
+s dr0 On 0
+j panicloop
