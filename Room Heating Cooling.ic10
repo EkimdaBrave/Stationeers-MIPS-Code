@@ -1,0 +1,41 @@
+# Room Heating Cooling
+alias GasSensor1 d0
+#alias GasSensor2 d4
+alias Disp d1
+
+alias temp r1
+alias idealtemp r2
+alias temp1 r3
+alias temp2 r4
+alias Celcius r5
+
+# Make sure MINtemp and MAXtemp are more
+# than OVERSHOOT apart from each other!
+define MINtemp 294
+define MAXtemp 297
+define OVERSHOOT 2
+
+start:
+yield
+l temp GasSensor1 Temperature
+#l temp2 GasSensor2 Temperature
+#add temp temp1 temp2
+#div temp temp 2
+sub Celcius temp 273
+s Disp Setting Celcius
+
+cooling:
+lb r0 -739292323 On 2
+mul r0 r0 OVERSHOOT
+sub r0 MAXtemp r0
+sgt r0 temp r0
+sb -739292323 On r0
+
+heating:
+lb r0 24258244 On 2
+mul r0 r0 OVERSHOOT
+add r0 MINtemp r0
+slt r0 temp r0
+sb 24258244 On r0
+
+j start
