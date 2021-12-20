@@ -1,6 +1,6 @@
 # Vending Machine Picker Mk1
 #  <Author>Ekimdabrave</Author>
-# This uses logic to dump all of one type of ore from a Vending machine
+# This uses logic to dump all of one type of item (ore) from a Vending machine
 alias VendM d0
 #alias SlotDisp d1
 alias Dial d2

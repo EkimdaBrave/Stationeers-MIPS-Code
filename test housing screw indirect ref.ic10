@@ -1,0 +1,22 @@
+# test housing indirect ref
+#
+alias LED1 d1
+alias LED2 d2
+alias LED3 d3
+alias LED4 d4
+alias DIAL d0
+
+
+init:
+s LED1 On 0
+s LED2 On 0
+s LED3 On 0
+s LED4 On 0
+start:
+yield
+l r0 DIAL Setting
+beqz r0 init
+#move r0 2
+s db Setting r0
+s dr0 On 1
+j start
