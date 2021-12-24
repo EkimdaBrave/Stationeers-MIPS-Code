@@ -1,0 +1,47 @@
+#  Autolathe Build Limiter Mk3 - Using Stacker wheel
+#  Select #  of things to build, then stop
+# Author: EkimdaBrave
+# 2021-12-24 21:59:15
+alias Machine d0
+alias Stacker d1
+alias PwrSW d2
+alias ReqDisp d3
+alias MadeDisp d4
+alias ResetButt d5
+
+init:
+alias ItemsReq r1
+alias ItemsMade r2
+alias Reset r3
+alias HashItem r4
+alias upthaspout r5
+alias Pwr r6
+cleardials:
+s Stacker Setting 1
+reset:
+move ItemsMade 0
+s Stacker Activate 1
+s Machine Activate 0
+s Machine ClearMemory 1
+
+start:
+l ItemsReq Stacker Setting
+s ReqDisp Setting ItemsReq
+
+#readbutton:
+l Reset ResetButt Setting
+bgtz Reset cleardials
+
+#add MadeDisp MadeDisp 1
+l ItemsMade Machine ExportCount
+l HashItem Machine RecipeHash
+s MadeDisp Setting ItemsMade
+s db Setting HashItem
+ls upthaspout Machine 1 Occupied
+brnez upthaspout -1
+beq ItemsMade ItemsReq reset
+l Pwr PwrSW Setting
+s Machine On Pwr
+s Stacker On Pwr
+yield
+j start
