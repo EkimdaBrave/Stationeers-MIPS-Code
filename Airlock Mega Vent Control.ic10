@@ -1,0 +1,35 @@
+# Mega Airlock Int Vent Control
+# 2021-09-28 19:39:39
+# Signals to read from ICH
+# Mode 0 Outward
+# Mode 1 Inward
+# On 0|1
+alias CtlICH d0
+alias mem1 d0
+alias mem2 d1
+
+init:
+alias Command r0
+alias Response r1
+define VentHash -1129453144
+alias VentMode r2
+alias VentOn r3
+# Set Offset
+define offset 0
+
+start:
+yield
+#---------------------------------------------
+# Values
+# 0 = off
+# 1 = on, Mode 0 Vent out
+# 2 = on, Mode 1 Vent in
+#
+l Command CtlICH Setting
+select VentOn Command 1 0
+sub VentMode VentMode 1
+sb VentHash Mode VentMode
+sb VentHash On VentOn
+s db Setting VentOn
+s mem2 Setting VentMode
+j start

@@ -1,5 +1,6 @@
 # test housing indirect ref
-#
+# use r0 to select a housing screw
+# i.e. d(r0)
 alias LED1 d1
 alias LED2 d2
 alias LED3 d3

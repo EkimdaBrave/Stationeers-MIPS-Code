@@ -1,0 +1,129 @@
+# Advanced Furnace FurnaceControlIC
+# Not my code
+alias Furnace d0
+alias Pumpcool d1
+alias Pumpfuel d2
+alias HashIC d3
+alias Dial d4
+alias temp r0
+alias press r1
+alias maxtemp r7
+alias mintemp r8
+alias maxpress r9
+alias minpress r10
+start:
+s db Setting -1
+s Pumpcool Setting 20
+s Pumpfuel Setting 3
+move maxtemp 0
+move mintemp 0
+move minpress 0
+move maxpress 0
+s Pumpfuel On 0
+s Pumpcool On 0
+s Furnace SettingInput 0
+s Furnace Open 0
+yield
+l r2 db Setting
+blez r2 start
+jr r2
+j Basic #1
+j steel #2
+j invar #3
+j solder #4
+j electrum #5
+j constantan #6
+j waspalloy #7
+j inconel #8
+j astroloy #9
+j hastelloy #10
+j stelite #11
+set:############################
+yield
+s Furnace Activate 1
+l r13 Furnace Open
+l r12 HashIC Setting
+l r2 Dial Setting
+l r11 Furnace RecipeHash
+s Furnace SettingInput 100
+l temp Furnace Temperature
+l press Furnace Pressure
+select maxpress maxpress maxpress 50000
+select maxtemp maxtemp maxtemp 10000
+slt r3 temp mintemp
+sgt r4 temp maxtemp
+slt r5 press minpress
+select r5 minpress r5 0
+sgt r6 press maxpress
+or r3 r3 r5
+mul r6 r6 30
+s Pumpfuel On r3
+s Pumpcool On r4
+s Furnace SettingOutput r6
+breq r12 -1301215609 2
+beq r12 r11 end
+bgtz r13 end
+beqz r2 end
+j set #############################
+end:
+l r14 Furnace Reagents
+s Furnace Open 1
+yield
+brgtz r14 -3
+s Dial Setting 0
+j start############################
+Basic:
+move mintemp 900
+move maxpress 40000
+j set
+steel:
+move mintemp 900
+j set
+invar:
+move mintemp 1200
+move maxtemp 1500
+move minpress 18000
+move maxpress 20000
+j set
+solder:
+move mintemp 350
+move maxtemp 550
+move minpress 1000
+move maxpress 50000
+j set
+electrum:
+move mintemp 600
+move maxpress 2400
+j set
+constantan:
+move mintemp 1000
+move minpress 20000
+move maxpress 50000
+j set
+waspalloy:
+move mintemp 400
+move maxtemp 800
+move minpress 50000
+move maxpress 55000
+j set
+inconel:
+move mintemp 600
+move minpress 23500
+move maxpress 24000
+j set
+astroloy:
+move mintemp 1000
+move minpress 30000
+move maxpress 40000
+j set
+hastelloy:
+move mintemp 950
+move maxtemp 1000
+move minpress 25000
+move maxpress 30000
+j set
+stelite:
+move mintemp 1800
+move minpress 10000
+move maxpress 20000
+j set

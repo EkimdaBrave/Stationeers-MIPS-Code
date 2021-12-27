@@ -1,0 +1,45 @@
+# Advanced Furnace HashIC
+# Not my code
+alias dial d0
+alias botton d1
+alias FurnaceControlIC d2
+alias Hash db
+main:
+yield
+l r0 dial Setting
+l r1 botton Setting
+bgtzal r1 Set
+blez r0 off
+
+mul r0 r0 2
+sub r0 r0 1
+brnez r0 r0
+s db Setting -1301215609
+j main
+s db Setting -654790771 #steel
+j main
+s db Setting -297990285 #Invar
+j main
+s db Setting -82508479 #Solder
+j main
+s db Setting 502280180 #Electrum
+j main
+s db Setting 1058547521 #Constantan
+j main
+s db Setting 156348098 #Waspaloy
+j main
+s db Setting -787796599 #Inconel
+j main
+s db Setting 412924554 #Astroloy
+j main
+s db Setting 1579842814 #Hastelloy
+j main
+s db Setting -1897868623 #Setllite
+j main
+off:
+s db Setting 0
+j main
+
+Set:
+s FurnaceControlIC Setting r0
+j ra

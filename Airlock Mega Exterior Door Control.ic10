@@ -1,0 +1,66 @@
+# Mega Exterior Door Control
+# 2021-09-02 20:07:19
+# Signals to read from ICH
+# Mode 0 Operate
+# Mode 1 Inward
+# Open 0 | 1
+# set the offset by increments of 5
+alias CtlICH d0
+alias DoorButt1 d1
+alias DoorButt2 d2
+
+init:
+alias Ctldb r0
+alias buttstate r1
+alias doorstate r2
+define VentHash -1129453144
+define DoorHash 1736080881
+define ButtHash 491845673
+# SET OFFSET
+#define offset 10
+define offset 0
+sb DoorHash Mode 0
+
+
+start:
+yield
+s db Setting Ctldb
+bdns d0 readbutt
+l Ctldb CtlICH Setting
+add Ctldb Ctldb offset
+beq Ctldb 1 DoorOpen
+beq Ctldb 2 DoorClose
+beq Ctldb 3 DoorLock
+beq Ctldb 4 DoorUnlock
+readbutt:
+lb buttstate ButtHash Setting Maximum
+bgtz buttstate toggle
+j start
+
+toggle:
+lb doorstate DoorHash Open Maximum
+#if buttstate = 1 then toggle doorstate
+beqz doorstate DoorOpen
+bgtz doorstate DoorClose
+
+j start
+
+DoorOpen:
+s db Setting Ctldb
+sb DoorHash Open 1
+j start
+
+DoorClose:
+s db Setting Ctldb
+sb DoorHash Open 0
+j start
+
+DoorLock:
+s db Setting Ctldb
+sb DoorHash Lock 1
+j start
+
+DoorUnlock:
+s db Setting Ctldb
+sb DoorHash Lock 0
+j start
