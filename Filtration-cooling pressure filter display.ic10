@@ -1,0 +1,83 @@
+# Filtration for Mars 2021-08-15 13:55:34 @cheesradar and me
+# - Cooling only
+# - Overpressure turns on flashing light
+# - Filter % display on a diode
+alias FilterMach d0
+alias DVCool d1
+alias Tank d2
+alias MoleDisp d3
+alias FilterLED d4
+
+init:
+s DVCool On 0
+s MoleDisp Mode 0
+s MoleDisp On 1
+define MaxPress 42000
+define MinPress 40000
+define MaxTemp 292
+define MinTemp 294
+alias TankPress r0
+alias TankTemp r1
+alias TankMoles r2
+alias filter1 r3
+alias filter2 r4
+alias filter3 r5
+alias filter3 r6
+alias filter4 r7
+alias filtertot r8
+alias CoolBool r9
+
+start:
+yield
+
+l TankPress Tank Pressure
+s db Setting TankPress
+l TankTemp Tank Temperature
+l TankMoles Tank TotalMoles
+s MoleDisp Setting TankMoles
+move CoolBool 1
+checkfilters:
+ls filter1 FilterMach 0 MaxQuantity
+ls filter2 FilterMach 1 MaxQuantity
+add filter3 filter1 filter2
+ls filter1 FilterMach 0 Quantity
+ls filter2 FilterMach 1 Quantity
+add filter4 filter2 filter1
+breqz filter3 2
+div filter1 filter4 filter3
+s FilterLED Setting filter1
+
+checkpress:
+bgtal TankPress MaxPress opendump
+bltal TankPress MinPress closedump
+
+checktemp:
+bgtal TankTemp MaxTemp opencooler
+bgtz CoolBool 2
+bltal TankTemp MinTemp closecooler
+
+j start
+
+opencooler:
+s DVCool On 1
+s FilterLED On 1
+s CoolBool 0
+j ra
+
+closecooler:
+s DVCool On 0
+s FilterLED On 0
+move CoolBool 1
+j ra
+
+opendump:
+#s DVDump On 1
+s FilterMach On 0
+sb -1535893860 On 1
+j ra
+
+closedump:
+#s DVDump On 0
+s FilterMach On 1
+sb -1535893860 On 0
+j ra
