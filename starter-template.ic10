@@ -13,13 +13,21 @@ define bob 1
 alias bruce r0 
 
 
+# main loop
 start:
 yield
 
 # do the things
 
-
-
+# jump relative to sub-routing
+jal subroutine
 j start 
+
+
+subroutine:
+# do the things
+
+# return
+j ra 
 
 

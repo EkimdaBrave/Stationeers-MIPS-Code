@@ -1,0 +1,10 @@
+# Functions ---icX
+ use loop
+ var a = 0 
+ example()
+ var on = d1.Open
+ d0.On = on
+ 
+ function example
+     move a 1
+ end

@@ -1,0 +1,9 @@
+move r0 0
+move r1 0
+sgez r15 r0
+beqz r15 if0else
+move r1 1
+j if0exit
+if0else:
+move r1 0
+if0exit:

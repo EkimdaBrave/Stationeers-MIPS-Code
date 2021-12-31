@@ -1,0 +1,7 @@
+move r0 0
+while0:
+sge r15 r0 10
+beqz r15 while0exit
+add r0 r0 1
+j while0
+while0exit:

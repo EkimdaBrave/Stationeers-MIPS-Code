@@ -1,4 +1,6 @@
 Airlock Mega Readme
+! WIP ! - Non-functional !!
+# 2021-12-31 17:50:43
 
 How does the Mega Airlock work?
 
@@ -21,9 +23,6 @@ CtlICH
 The PWR & DATA ports of the ICH connect to the control backbone.
 The PWR ports of the other ICHs also connect to the control backbone
 The DATA ports of the other ICHs connect to their respective (isolated) networks
-
-
-
 
 
 [Exterior Doors ICH]

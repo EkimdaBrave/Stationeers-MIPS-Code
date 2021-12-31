@@ -1,0 +1,43 @@
+alias SOLAR_HASH r0
+alias SOLAR_ANGLEV r1
+alias SOLAR_ANGLEH r2
+alias horizontal r3
+alias vertical r4
+# use constants
+# Solar Tracking Attempt -- ICX
+alias SolarSensor d0
+alias SolarPanel d1
+alias LedVertical d2
+alias LedHorizontal d3
+l SOLAR_HASH d1 PrefabHash
+#var vertical = 180
+#var horizontal = 180
+main:
+jal readSolarAngles
+jal updateLED
+jal setSolarPanels
+yield
+j main
+jr 27
+setSolarPanels:
+sb SOLAR_HASH Vertical vertical
+sb SOLAR_HASH Horizontal horizontal
+j ra
+updateLED:
+s d2 Setting vertical
+s d3 Setting horizontal
+j ra
+readSolarAngles:
+l SOLAR_ANGLEV d0 Vertical
+l SOLAR_ANGLEH d0 Horizontal
+#mod SOLAR_ANGLEH SOLAR_ANGLEH 360
+move horizontal SOLAR_ANGLEH
+slt r15 SOLAR_ANGLEV 10
+beqz r15 if0else
+move vertical 10
+j if0exit
+if0else:
+sub r14 SOLAR_ANGLEV 75
+div vertical r14 1.7
+if0exit:
+j ra
