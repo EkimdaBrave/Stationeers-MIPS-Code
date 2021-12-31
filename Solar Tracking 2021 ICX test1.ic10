@@ -5,6 +5,7 @@ alias horizontal r3
 alias vertical r4
 # use constants
 # Solar Tracking Attempt -- ICX
+# WIP - DOES NOT WORK CORRECTLY 2022-01-01 09:35:04
 alias SolarSensor d0
 alias SolarPanel d1
 alias LedVertical d2
