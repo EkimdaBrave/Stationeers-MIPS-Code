@@ -7,10 +7,16 @@ How does the Mega Airlock work?
 - Things are divided into seperate 'networks' or sub-systems
     [network]       [offset]    [signals]
     Control                 
-    InteriorDoors   10          Open 0|1 , Lock 0|1  
-    ExteriorDoors   20          Open 0|1 , Lock 0|1 
-    InteriorVents   30          Mode 0|1 (Out|In) , On 0|1
-    ExteriorVents   40          Mode 0|1 (Out|In) , On 0|1
+    InteriorDoors   10          10|11   Open 0|1 , 
+                                12|13   Lock 0|1  
+         Buttons                14|15
+    ExteriorDoors   20          20|21   Open 0|1
+                                22|23   Lock 0|1 
+         Buttons                24|25
+    InteriorVents   30          30|31   On 0|1
+                                32|33   Mode 0|1 (Out|In)
+    ExteriorVents   40          40|41   On 0|1
+                                42|43   Mode 0|1 (Out|In)
 
 The Control network contains;
     [CtlICH] [GASSensor] [ExtVentICH] [InteriorICH] [ExtDoorICH] [IntDoorICH]

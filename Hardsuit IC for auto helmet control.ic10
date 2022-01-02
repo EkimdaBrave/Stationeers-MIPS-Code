@@ -1,0 +1,93 @@
+#Hardsuit IC for auto helmet control
+# Not my code - working 2022-01-01 20:20:21
+#Override control by moving filter
+# out of the first filter slot
+
+alias helmet d0
+alias backpack d1
+alias minPressure r0
+alias maxPressure r1
+alias minTemp r3
+alias maxTemp r4
+
+#SETTINGS ---------------
+
+move minPressure 40
+move maxPressure 125
+move minTemp 280
+move maxTemp 310
+s db PressureSetting 50
+s db TemperatureSetting 294
+
+#END OF SETTINGS ---------
+
+alias helmetOpen r5
+alias externalPressure r6
+alias temp r7
+start:
+l helmetOpen helmet Open
+l externalPressure db PressureExternal
+#No longer needed as of r7869
+#div externalPressure externalPressure 1000
+l temp db TemperatureExternal
+beq helmetOpen 0 isclosed
+
+isopen:
+#If open, make sure pressure and temp are ok
+#And light is off
+#Check for override
+ls r9 db 4 Occupied
+ls r12 db 7 Occupied
+or r9 r9 r12
+beq r9 0 open2 #Still handle toggles on override
+s helmet Lock 1 #lock helmet if not override
+slt r9 externalPressure minPressure
+bne r9 0 closing
+slt r9 maxPressure externalPressure
+bne r9 0 closing
+slt r9 temp minTemp
+bne r9 0 closing
+slt r9 maxTemp temp
+bne r9 0 closing
+j open3
+open2:
+s helmet Lock 0 #Unlock
+open3:
+s db On 0
+s db Filtration 0
+s db AirRelease 0
+yield
+j start
+isclosed:
+#Check for override
+ls r9 db 4 Occupied
+or r9 r9 r12
+beq r9 0 next1 #Still handle toggles on override
+s helmet Lock 1 #Lock helmet if not override
+slt r9 externalPressure minPressure
+bne r9 0 next
+slt r9 maxPressure externalPressure
+bne r9 0 next
+slt r9 temp minTemp
+bne r9 0 next
+slt r9 maxTemp temp
+bne r9 0 next
+#If we're here, it's safe to open
+j opening
+next1:
+s helmet Lock 0 #Unlock
+next:
+#s helmet On 1
+s db On 1
+s db Filtration 1
+s db AirRelease 1
+yield
+j start
+opening:
+s helmet Open 1
+yield
+j start
+closing:
+s helmet Open 0
+yield
+j start

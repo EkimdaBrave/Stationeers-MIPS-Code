@@ -2,11 +2,13 @@
 # Original: seancl
 # 2022-01-01 20:24:44
 alias sensor d0
-alias cooler d1
-alias heater d2
-alias N2pump d3
-alias O2pump d4
-alias CO2pump d5
+#alias cooler d1
+#alias heater d2
+alias N2pump d1
+alias O2pump d2
+alias CO2pump d3
+alias pumpWaste d4
+alias LEDDisp d5
 
 alias temp r1
 alias pres r2
@@ -25,6 +27,15 @@ define TARGETN2 80
 define TARGETO2 18
 define TARGETCO2 7
 
+# Set Active Vents
+sb -1129453144 Mode 0
+sb -1129453144 Lock 1
+sb -1129453144 PressureExternal 100
+s pumpWaste Mode 1
+s pumpWaste PressureExternal 101
+s pumpWaste On 1
+s pumpWaste Lock 1
+
 init:
 # set idealtemp as the midpoint of min and max
 add r0 MINTEMP MAXTEMP
@@ -35,29 +46,36 @@ yield
 l pres sensor Pressure
 l temp sensor Temperature
 
+dispTemperature:
+l r0 sensor Temperature
+sub r0 r0 273.15
+s LEDDisp Setting r0
+#j ra
+
 pressureCheck:
 slt r0 pres MINPRES
 bnez r0 panic
 
 cooling:
-bdns cooler heating
-l r0 cooler On
-#lb r0 -1721846327 On 0
+#bdns cooler heating
+#l r0 cooler On
+lb r0 -739292323 On Maximum
 mul r0 r0 OVERSHOOT
 sub r0 MAXTEMP r0
 sgt r0 temp r0
-s cooler On r0
+#s cooler On r0
+sb -739292323 On r0
 #sb -1721846327 On r0
 
 heating:
-bdns heater ventilation
-l r0 heater On
-#lb r0 24258244 On 0
+#bdns heater ventilation
+#l r0 heater On
+lb r0 24258244 On Maximum
 mul r0 r0 OVERSHOOT
 add r0 MINTEMP r0
 slt r0 temp r0
-s heater On r0
-#sb 24258244 On r0
+#s heater On r0
+sb 24258244 On r0
 
 #j start
 

@@ -1,5 +1,5 @@
-#ekim-stopwatch v1.0
-# this uses the 'stopwatch' from 'Kit - Music MAchine' as it's time source
+# <Author>Ekimdabrave</Author>
+# 2022-01-03 12:40:45
 # Stopwatch
 alias SW d0
 alias SWButton d1
