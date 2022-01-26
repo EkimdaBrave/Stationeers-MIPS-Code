@@ -1,0 +1,63 @@
+alias L1Sort d0
+alias L2Sort d1
+alias L3sort d2
+alias L4Sort d3
+alias L5Sort d4
+alias L6sort d5
+
+move SorterHash 999999999
+move LedHash    888888888
+move DialHash   777777777
+
+init:
+# turn on LEDs
+sb LedHash On 1
+sb LedHash Mode 0
+
+move r4 0       # set r4 to 0 <superflous>
+
+start:
+sb SorterHash Output 0          # blacklist everything until we choose a value for 'r4'
+move DialHash <213542213>       # put the PrefabHash of 'dial' into var 'DialHash'
+move r4 0                       # set r4 (output level) to 0
+
+readmax:
+lb r5 DialHash Setting Maximum  # read all the dials for 'maximum' setting
+sne r7 r4 r5                    # set r7=1 if r4!=r5 
+brne r7 3                       # if r7==0 then "Branch Relative" (jump ahead) 3 lines
+select r7 r4 r5 r4              # if r7=true(1) then set r4 to r5. If r7=false(0) tgeb set r4 to r4
+sb LedHash Setting r4           # set LED to 'r4' 
+sb DialHash Setting r4          # set Dials to 'r4' 
+
+j SorterOutput                  # jump to SorterOutput
+
+readmin:
+lb r8 DialHash Setting Minimum  # read all the dials for 'minimum' setting
+sne r7 r4 r6                    # set r7=1 if r4!=r6 
+brne r7 3                       # if r7==0 then "Branch Relative" (jump ahead) 3 lines
+select r7 r4 r6 r4              # if r7=true(1) then set r4 to r6. If r7=false(0) tgeb set r4 to r4
+sb LedHash Setting r4           # set LED to 'r4' 
+sb DialHash Setting r4          # set Dials to 'r4' 
+
+
+SorterOutput:
+beq r4 0 L1Drop
+beq r4 1 L2Drop
+beq r4 2 L3Drop
+beq r4 3 L4Drop
+beq r4 4 L5Drop
+beq r4 5 L6Drop
+
+j start
+
+L1Drop:
+bdns L1Drop start               # jump back to start if no device attached to IC Housing
+s L1Drop Output 1               #Set Sorter Output to '1' (whitelist everything)
+j start
+
+L2Drop:
+bdns L2Drop start               # jump back to start if no device attached to IC Housing
+s L2Drop Output 1
+j start
+
+<repeat for up to six Sorters>
