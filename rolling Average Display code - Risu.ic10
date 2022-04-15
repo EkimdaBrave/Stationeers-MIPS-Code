@@ -1,0 +1,27 @@
+# Risu -  just a rolling average code I've had floating around
+# 2022-03-15 12:05:51
+# 
+
+define STACK 10
+alias total r0
+alias count r1
+alias x r2
+push 0
+brlt sp STACK -1
+move sp 0
+move total 0
+move count 0
+loop:
+yield
+add sp sp 1
+pop x
+sub total total x
+l x d0 Setting
+push x
+add total total x
+max count count sp
+brlt sp STACK 2
+move sp 0
+div x total count
+s d1 Setting x
+j loop

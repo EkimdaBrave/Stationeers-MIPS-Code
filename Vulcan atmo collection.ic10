@@ -1,0 +1,39 @@
+# Vulcan atmo collection
+# Keep Tank full
+# 20-40MPA
+# 2022-04-12 19:48:02
+# Ekimdabrave
+alias Tank d0
+alias Sensor d1
+
+init:
+define MaxPress 40000
+define MinPress 20000
+define MinTemp 423
+alias TankPress r0
+alias ExtTemp r1
+sb -1129453144 Mode 1
+
+start:
+yield
+l TankPress Tank Pressure
+#s db Setting TankPress
+l ExtTemp Sensor Temperature
+s db Setting ExtTemp
+blt ExtTemp MinTemp checkpress
+bgt ExtTemp MinTemp closefill
+
+j start
+
+checkpress:
+blt TankPress MaxPress openfill
+bgt TankPress MinPress closefill
+
+j start
+openfill:
+sb -1129453144 On 1
+j start
+
+closefill:
+sb -1129453144 On 0
+j start

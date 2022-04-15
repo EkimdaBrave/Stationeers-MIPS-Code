@@ -5,7 +5,7 @@
 # Mode 1 Inward
 # Open 0 | 1
 # set the offset by increments of 5
-alias CtlICH d0
+#alias DoorMem d0
 alias DoorButt1 d1
 alias DoorButt2 d2
 
@@ -13,9 +13,10 @@ init:
 alias Ctldb r0
 alias buttstate r1
 alias doorstate r2
-define VentHash -1129453144
+#define VentHash -1129453144
 define DoorHash 1736080881
 define ButtHash 491845673
+define MemHash -851746783
 # SET OFFSET
 #define offset 10
 define offset 0
@@ -26,7 +27,7 @@ start:
 yield
 s db Setting Ctldb
 bdns d0 readbutt
-l Ctldb CtlICH Setting
+l Ctldb DoorMem Setting
 add Ctldb Ctldb offset
 beq Ctldb 1 DoorOpen
 beq Ctldb 2 DoorClose
