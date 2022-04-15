@@ -1,0 +1,50 @@
+#Sleeplessone - Power Transmitter aiming
+#Set transmitter and receiver with data to north.
+#Setup logic transmitter set to receiver for d1.
+alias powerSend d0
+alias powerReceive d1
+
+alias deltaX r5
+alias deltaY r6
+alias deltaZ r7
+alias radDeg r8
+div radDeg 180 3.1415927
+alias asq r9
+alias bsq r10
+alias vAngle r14
+alias hAngle r15
+
+start:
+#load position deltas
+l r0 powerSend PositionX
+l r1 powerReceive PositionX
+sub deltaX r1 r0
+l r0 powerSend PositionY
+l r1 powerReceive PositionY
+sub deltaY r1 r0
+l r0 powerSend PositionZ
+l r1 powerReceive PositionZ
+sub deltaZ r1 r0
+# Trig functions to calculate horizontal
+atan2 r0 deltaX deltaZ
+mul hAngle r0 radDeg
+#Pythaoras to find hypotenuse
+mul asq deltaX deltaX
+mul bsq deltaZ deltaZ
+add r0 asq bsq
+sqrt r0 r0
+#Calculate vertical angle using hypotenuse
+div r1 deltaY r0
+atan r0 r1
+mul r0 r0 radDeg
+add vAngle 90 r0
+#Send results to transmitter
+s powerSend Vertical vAngle
+s powerSend Horizontal hAngle
+#Send inverse results to receiver.
+add r0 hAngle 180
+s powerReceive Horizontal r0
+sub r0 180 vAngle
+s powerReceive Vertical r0
+yield
+j start

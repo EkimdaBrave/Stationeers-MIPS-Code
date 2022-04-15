@@ -1,0 +1,99 @@
+#Atmospheric controller
+#check ratio of gases individually
+#activate volume pump from storage tanks if low
+#uses 3 volume pumps and one gas sensor
+#it requires a back pressure valve to vent excess
+#pressure
+#optional cooler and/or heater
+
+alias sensor d0
+alias pumpNitrogen d1
+alias pumpOxygen d2
+alias pumpCarbonDioxide d3
+alias pumpWaste d4
+alias LEDDisp d5
+
+#alias cooler d4 # -739292323
+#alias heater d5 # 24258244
+
+define minimumNitrogenRatio 0.5
+define minimumOxygenRatio 0.45
+define minimumCO2Ratio 0.02
+define minimumPressure 50
+define maximumPressure 100
+define minimumTemp 293
+define maximumTemp 298
+
+# Set Active Vents
+sb -1129453144 Mode 0
+sb -1129453144 Lock 1
+s pumpWaste Mode 1
+s pumpWaste PressureExternal maximumPressure
+s pumpWaste On 1
+s pumpWaste Lock 1
+
+start:
+jal checkOverPressure
+jal checkNitrogen
+jal checkOxygen
+jal checkCarbonDioxide
+#bdseal cooler checkCooler
+#bdseal heater checkHeater
+jal checkCooler
+jal checkHeater
+jal dispTemperature
+sleep 1
+yield
+j start
+
+dispTemperature:
+l r0 sensor Temperature
+sub r0 r0 273.15
+s LEDDisp Setting r0
+j ra
+
+checkOverPressure:
+#if over pressure then set punps to zero
+l r0 sensor Pressure
+slt r0 r0 maximumPressure
+mul r0 r0 10
+s pumpNitrogen On r0
+s pumpOxygen On r0
+s pumpCarbonDioxide On r0
+j ra
+
+checkNitrogen:
+#if below minimum pressure then add Nitogen
+l r0 sensor Pressure
+slt r0 r0 minimumPressure
+l r1 sensor RatioNitrogen
+slt r1 r1 minimumNitrogenRatio
+or r0 r0 r1
+s pumpNitrogen On r0
+j ra
+
+checkOxygen:
+l r0 sensor RatioOxygen
+slt r0 r0 minimumOxygenRatio
+s pumpOxygen On r0
+j ra
+
+checkCarbonDioxide:
+l r0 sensor RatioCarbonDioxide
+slt r0 r0 minimumCO2Ratio
+s pumpCarbonDioxide On r0
+j ra
+
+checkCooler:
+l r0 sensor Temperature
+sge r0 r0 maximumTemp
+#s cooler On r0
+sb -739292323 On r0
+j ra
+
+checkHeater:
+l r0 sensor Temperature
+sle r0 r0 minimumTemp
+#s heater On r0
+sb 24258244 On r0
+j ra

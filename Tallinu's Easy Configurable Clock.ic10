@@ -1,0 +1,122 @@
+# Tallinu's Easy Configurable Clock
+# Time display based on in-game sun position.
+# (Days, hours, and minutes are compressed to
+# match the length of the game's day.)
+# Requires a daylight sensor placed on the south
+# side of a frame (so it looks toward the southern
+# horizon) with the port on the bottom.
+# Assign the sensor to d0 and a LED display to d1.
+# Additional displays can be assigned to d2-d5.
+# The current time will be written to all displays.
+# Logic memory can be attached to any output, too.
+# The same value displayed on the LED screens will
+# be written to all attached memory units, to allow
+# for relaying between data/power networks.
+# The IC housing has the current color value, which
+# can be used in combination with a logic memory to
+# also relay the color setting to other networks.
+
+# ----- Configuration -----
+define TwelveHour 1 #1 = 12h clock, 0 = 24h clock
+# Do you prefer a well formatted 12 hour clock?
+# Or a 24 hour clock with loss of leading zeros?
+define IncludeMinutes 1 #1 = show minutes, 0 = off
+# If you prefer a 24 hour clock, turning off the
+# display of minutes may make the clock a little
+# more usable. You'll see numbers ranging from
+# 0 to 23 instead of things like 5, 337, or 2250.
+define AMColor 0 #Display text color during AM
+define PMColor 4 #Display text color during PM
+# Color settings work with either clock style.
+# AM and PM colors may be set to the same value.
+# Range of values accepted by LEDs is 0 through 11.
+# Defaults are blue (0) for AM and red (4) for PM.
+#    Note on 24 hour clocks:
+# 12 hour clocks never have a leading zero so they
+# always look fine, but 24 hour clocks potentially
+# can drop up to three leading zeros, so 00:05 will
+# sadly be shown as "5".
+#    This can't be fixed in current game version.
+# Using a decimal "." to separate hours and minutes
+# causes an even worse problem, in my opinion, with
+# ambiguous loss of a zero in the minutes.
+# Does "9.5" mean 09:50? 09:05? 09:30 (interpreting
+# the .5 as an actual fraction, half an hour)? Etc.
+# The right one (09:50) just isn't obvious enough.
+# ----- End of Configuration -----
+
+alias DaySensor d0
+alias Clock1LED d1
+alias Clock2LED d2
+alias Clock3LED d3
+alias Clock4LED d4
+alias Clock5LED d5
+
+alias rTime24h r9
+alias rAMPM r10
+alias rHours24h r11
+alias rHours12h r12
+alias rMinutes r13
+alias rColor r14
+alias rFinalDisplay r15
+
+define DaySensorHash 1076425094
+define SmallLEDHash -815193061
+define MediumLEDHash -53151617
+define LargeLEDHash -1949054743
+define MemoryHash -851746783
+
+Start:
+bdns d0 MissingDevice #Is there a device here?
+l r0 d0 PrefabHash #Is it a Daylight Sensor?
+bne r0 DaySensorHash MissingDevice
+s DaySensor Mode 1 #Horizontal
+yield
+l r0 DaySensor SolarAngle
+#For north facing sensors, negate here?
+add r0 r0 180 #Convert to 0-360 range
+div rTime24h r0 15 #Convert to 0.0-24.0 range
+div r0 rTime24h 12
+floor rAMPM r0 #0 for AM, 1 for PM
+floor rHours24h rTime24h #Whole hours only
+sub r0 rHours24h 1 #avoid noon/midnight = 0:00
+mod r0 r0 12
+add rHours12h r0 1 #12 hour clock
+sub r0 rTime24h rHours24h #Isolate fractional hour
+mul r0 r0 60 #Convert to minutes
+floor rMinutes r0 #Drop fractional minute
+
+#Write to displays
+select rColor rAMPM PMColor AMColor
+select rFinalDisplay TwelveHour rHours12h rHours24h
+beqz IncludeMinutes SkipMinutes #Show minutes?
+mul rFinalDisplay rFinalDisplay 100
+add rFinalDisplay rFinalDisplay rMinutes
+SkipMinutes:
+#rFinalDisplay will be written to each output
+
+move r1 1 #Set up a loop through d1 to d5
+DisplayLoop:
+bdns dr1 SkipDevice #Nothing present on this screw?
+l r2 dr1 PrefabHash #Check device type
+#s db Setting r2 #Temporary, to see hash
+beq r2 SmallLEDHash WriteLED #Single console?
+beq r2 MediumLEDHash WriteLED #Double console?
+beq r2 LargeLEDHash WriteLED #Triple console?
+beq r2 MemoryHash WriteMemory #Logic Memory?
+j SkipDevice #Not a recognized LED
+WriteLED:
+s dr1 Color rColor #Write color
+WriteMemory: #Skips writing color for logic memory
+s dr1 Setting rFinalDisplay #Write time
+SkipDevice:
+add r1 r1 1 #Increment device
+ble r1 5 DisplayLoop #Loop? Or out of devices?
+
+s db Setting rColor #Output LED color on housing
+j Start
+
+MissingDevice:
+s db Setting -9001
+yield
+j Start

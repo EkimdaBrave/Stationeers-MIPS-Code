@@ -1,0 +1,18 @@
+# Testing the bits;
+# 
+# Door Open Close
+alias DoorMem d0
+alias ButtOne d1
+
+start 
+yield
+# read the thing (lever)
+l r0 ButtOne Setting 
+sum r0 r0 10 
+# set the DoorMem 
+s DoorMem r0 
+j start 
+
+
+
+

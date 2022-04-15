@@ -1,0 +1,17 @@
+# test of interior doors
+# 2022-03-08 21:17:58
+
+define DoorHash 1736080881
+define MemHash -851746783
+
+start:
+lb r0 MemHash Setting Average
+sub r0 r0 10
+s db Setting r0 
+
+# operate the doors!
+
+sb DoorHash Open r0 
+
+yield
+j start 
