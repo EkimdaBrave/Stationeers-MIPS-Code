@@ -1,0 +1,31 @@
+# Solid Gen Control
+# Hacked from a script from Steam Workshop 
+# Original Author: 123
+# 2022-01-06 10:05:41
+alias BReader d0    # -400115994
+alias Generator1 d1 # 813146305
+alias Alert d2
+#alias Generator2 d3
+#bdns d3 6
+s Generator1 On 0
+start:
+move r1 99999999
+yield
+lb r0 -400115994 
+l r0 d0 Setting
+l r2 Generator1 On
+bnez r2 16
+sub r3 r0 r1
+bltz r3 16
+s db Setting 1
+move r1 r0
+beqz r2 19
+bgt r0 1800000 4
+bgt r0 180000 8
+s Generator1 On 1
+s db Setting 0
+bdns d3 24
+s d3 On 1
+bdns Alert 8
+s Alert On 1
+j start

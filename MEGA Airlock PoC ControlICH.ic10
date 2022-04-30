@@ -1,0 +1,26 @@
+# MEGA Airlock PoC ControlICH
+# Testing the bits;
+# 2022-03-08 22:02:37
+# Door Open Close
+alias DoorMem d0
+alias ButtOne d1
+
+start:
+yield
+# read the thing (lever)
+l r0 ButtOne Setting
+#add r0 r0 10
+# set the DoorMem
+s DoorMem Setting r0
+#jr DoorAck
+
+j start
+
+
+# DED CODE
+DoorAck:
+yield
+l r1 DoorMem Setting
+s db Setting r1
+brne r1 19 -3
+j ra

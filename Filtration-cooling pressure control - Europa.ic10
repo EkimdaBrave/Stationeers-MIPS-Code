@@ -1,7 +1,8 @@
-# Filtration for Mars 2021-08-15 13:55:34 @cheeseradar and me
+# Filtration for Europa 2022-04-29 17:45:58 @cheeseradar @MossFrog and me
 # - Cooling only
 # - Overpressure turns on flashing light
-# - Filter % display on a diode
+# -10C = 263.15
+#  20C = 293.15
 alias FilterMach d0
 alias DVCool d1
 alias Tank d2

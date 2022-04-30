@@ -1,0 +1,121 @@
+# Also airlock advanced, but not quite as fast as the other?
+# 2022-04-30 21:43:47 
+alias DoorExt d0 # door or airlock External and
+alias Doorint d1 # Internal
+alias Sensor d2  # Inside the airlock
+alias AVint d3   # Active Vent Internal
+alias AVExt d4   # Optional Active Vent External
+alias Switch d5  # Optional to Lock the Doors
+alias ExtInt r0
+alias sInt r1
+alias sExt r3
+alias pAct r4
+alias SwVal r5
+alias raADV r6
+####################################################
+# Options ### set it to what you need
+define ExtPress 45   #External Pressure in KPa
+define intPress 100 #Internal Pressure in KPa
+####################################################
+sb -828056979 Mode 2
+sb -828056979 Volume 3
+start:
+move ExtInt 0
+move sInt 0
+move sExt 1
+s Doorint Mode 1
+s DoorExt Mode 1
+s Doorint Setting 0
+s DoorExt Setting 1
+s Doorint Open 0
+s DoorExt Open 1
+rota:
+#rand r7
+#mul r7 r7 14
+#round r7 r7
+#sb -828056979 Mode r7
+#s db r7
+sb -828056979 On 0
+sb -1535893860 On 0
+bdseal Switch SwitchIsSet
+l sInt Doorint Setting
+l sExt DoorExt Setting
+beq ExtInt 0 isExt
+beq ExtInt 1 isInt
+j rota
+SwitchIsSet:
+l SwVal Switch Setting
+beq SwVal 1 Unlocked
+s Doorint Lock 1
+s DoorExt Lock 1
+j rota
+Unlocked:
+s Doorint Lock 0
+s DoorExt Lock 0
+j ra
+
+isExt:
+beq sInt 1 toInt
+beq sExt 0 toInt
+j rota
+isInt:
+beq sInt 0 toExt
+beq sExt 1 toExt
+j rota
+toInt:
+sb -1535893860 On 1
+sb -828056979 On 1
+s DoorExt Open 0
+yield
+yield
+bdseal AVExt toIntAdv
+s AVint Mode 0
+s AVint On 1
+l pAct Sensor Pressure
+bleal pAct intPress Wait
+s AVint On 0
+move ExtInt 1
+s Doorint Setting 1
+s DoorExt Setting 0
+s Doorint Open 1
+j rota
+toIntAdv:
+move raADV ra
+s AVExt Mode 1
+s AVExt On 1
+l pAct Sensor Pressure
+bneal pAct 0 Wait
+s AVExt On 0
+j raADV
+
+toExt:
+sb -1535893860 On 1
+sb -828056979 On 1
+s Doorint Open 0
+yield
+yield
+s AVint Mode 1
+s AVint On 1
+l pAct Sensor Pressure
+bneal pAct 0 Wait
+s AVint On 0
+bdseal AVExt toExtAdv
+move ExtInt 0
+s Doorint Setting 0
+s DoorExt Setting 1
+s DoorExt Open 1
+j rota
+toExtAdv:
+move raADV ra
+s AVExt Mode 0
+s AVExt On 1
+l pAct Sensor Pressure
+bleal pAct ExtPress Wait
+s AVExt On 0
+j raADV
+
+Wait:
+yield
+l pAct Sensor Pressure
+sub ra ra 1
+j ra

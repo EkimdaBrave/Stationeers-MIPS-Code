@@ -1,0 +1,30 @@
+# WeatherStations - Ekim Cheese MossFrog
+# 2022-04-30 14:50:07
+
+alias WeatherStation d0
+define Beacon -1535893860
+define LEDDisplay -53151617
+sb LEDDisplay On 1
+sb LEDDisplay Mode 0
+sb Beacon On 0
+
+start:
+l r0 WeatherStation NextWeatherEventTime
+l r1 WeatherStation Mode
+trunc r0 r0
+sb LEDDisplay Setting r0
+bgt r1 0 alert
+beqal r1 0 reset
+yield
+j start
+
+alert:
+sb Beacon On 1
+yield
+j start
+
+reset:
+sb Beacon On 0
+yield
+j ra
+

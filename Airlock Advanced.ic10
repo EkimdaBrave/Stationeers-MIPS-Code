@@ -4,8 +4,8 @@
 # 2021-12-24 22:57:57
 
 #Change these as necessary
-define TargetInteriorPressure 100
-define TargetExteriorPressure 20
+define TargetInteriorPressure 0
+define TargetExteriorPressure 100
 #That's it, you don't have to read any more
 alias DoorIn d0
 alias DoorEx d1

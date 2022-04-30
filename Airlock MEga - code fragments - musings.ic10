@@ -1,0 +1,18 @@
+# Airlock MEga - code fragments - musings
+
+# Things we want to read
+# Door - open|shut
+# Door Button
+# Vents - on|off
+          Mode In|Out
+# AV PrefabHash 
+move r10 10
+alias AVents 
+move 
+
+readthings:
+lb <CTLICH> Setting r(r10) 
+
+setthings:
+sb <CTRLICH> Setting r(r10)
+
