@@ -1,0 +1,15 @@
+# Random number snippet
+# a number between 1 and 14
+# Ekimdabrave
+# 2022-05-03 21:46:26
+alias rando1 r7
+alias rando2 r8
+start:
+yield
+
+rand rando1
+mul rando1 rando1 14
+add rando1 rando1 1
+trunc rando1 rando1
+
+

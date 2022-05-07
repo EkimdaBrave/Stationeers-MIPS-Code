@@ -1,0 +1,33 @@
+# Aircon control for Gas Cooling
+# 2022-05-07 12:45:18 
+#turn the aircon on/off
+# 22C = 295K
+# 20C = 293.15
+alias Aircon d0
+alias Analyzer d1
+
+init:
+s Aircon On 0
+define MaxTemp 295
+define MinTemp 293
+alias GasTemp r0
+alias CoolBool r1
+move CoolBool 0
+
+start:
+l GasTemp Analyzer Temperature
+bgtal GasTemp MaxTemp opencooler
+bgtz CoolBool start
+bltal GasTemp MinTemp closecooler
+yield
+j start
+
+opencooler:
+s Aircon On 1
+move CoolBool 0
+j ra
+
+closecooler:
+s Aircon On 0
+move CoolBool 1
+j ra
