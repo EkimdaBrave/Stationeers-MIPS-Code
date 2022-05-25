@@ -1,0 +1,89 @@
+# Ore Sorter ores-->sorter-->Stacker-->Silo 
+# 'hash' is a mem chip set to 'hash' variant
+# set the required ore type on the 'hash' chip
+# 
+# 2022-05-08 08:34:56
+
+alias hash d0
+alias sorter d1
+alias silo d2
+alias stacker d3
+alias display d4
+
+alias isOccupied r1
+alias contents r2
+alias isTarget r3
+alias siloCount r4
+alias stackerCount r5
+alias isNotFull r6
+alias target r7
+alias output r8
+alias isActive r9
+alias dispColor r10
+
+define IMPORTSLOT 0
+define PROCSLOT 2
+define OUTHASH -53151617
+define BUTTONHASH 491845673
+define GREEN 2
+define ORANGE 3
+define RED 4
+
+init:
+l target hash Setting
+s db Setting 0
+s sorter On 1
+s sorter Mode 2
+s silo On 1
+s stacker On 1
+s stacker Setting 50
+s display On 1
+s display Mode 0
+s display Setting 0
+
+start:
+yield
+s lever Open 0
+
+manageSilo:
+l siloCount silo Quantity
+slt isNotFull siloCount 600
+
+manageStacker:
+move stackerCount 0
+ls r0 stacker PROCSLOT Occupied
+beqz r0 checkActive
+ls stackerCount stacker PROCSLOT Quantity
+
+checkActive:
+l r0 db Setting
+seq isActive r0 target
+
+manageDisplay:
+mul r0 siloCount 50
+add r0 r0 stackerCount
+s display Setting r0
+slt dispColor r0 50
+select dispColor dispColor ORANGE GREEN
+select dispColor r0 dispColor RED
+s display Color dispColor
+beqz isActive manageSorter
+sb OUTHASH Setting r0
+sb OUTHASH Color dispColor
+
+manageSorter:
+ls isOccupied sorter IMPORTSLOT Occupied
+beqz isOccupied manageButton
+ls contents sorter IMPORTSLOT OccupantHash
+seq isTarget contents target
+and output isNotFull isTarget
+s sorter Output output
+
+manageButton:
+s silo Open 0
+beqz isActive start
+lb r0 BUTTONHASH Setting Maximum
+s silo Open r0
+
+
+j start

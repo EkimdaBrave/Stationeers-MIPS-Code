@@ -1,0 +1,41 @@
+# Aircon control for Gas Cooling
+# Also turn on DV to Filtration @ 20c 
+# 2022-05-07 12:45:18 
+#turn the aircon on/off
+# 22C = 295K
+# 20C = 293.15
+alias Tank d0
+alias FiltrationDV d1
+alias AirconDV d2
+
+init:
+s FiltrationDV On 0
+s AirconDV On 0
+define MaxTemp 295
+define MinTemp 293
+alias GasTemp r0
+alias CoolBool r1
+move CoolBool 0
+
+start:
+# Read Tank temperature
+l GasTemp Tank Temperature
+s db Setting GasTemp
+bgtal GasTemp MaxTemp closevalve
+bgtz CoolBool start
+bltal GasTemp MinTemp openvalve
+
+yield
+j start
+
+closevalve:
+s FiltrationDV On 0
+s AirconDV On 1
+move CoolBool 0
+j ra
+
+openvalve:
+s FiltrationDV On 1
+s AirconDV On 0
+move CoolBool 1
+j ra

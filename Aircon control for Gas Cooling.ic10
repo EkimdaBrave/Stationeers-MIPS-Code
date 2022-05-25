@@ -1,4 +1,5 @@
 # Aircon control for Gas Cooling
+# Also turn on DV to Filtration @ 20c 
 # 2022-05-07 12:45:18 
 #turn the aircon on/off
 # 22C = 295K

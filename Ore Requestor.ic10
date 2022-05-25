@@ -1,0 +1,36 @@
+# Ore Requestor - goes with ore sorting and storage
+# for selecting 'x' from a silo
+# EkimdaBrave 
+# 2022-05-16 19:26:55
+alias Dial d0  
+
+define IRON 1758427767
+define COAL 1724793494
+define COPPER -707307845
+define NICKEL 1830218956
+define SILICON 1103972403
+define LEAD -190236170
+define SILVER -916518678
+define COBALT -983091249
+define GOLD -1348105509
+
+init:
+move r0 IRON
+move r1 COAL
+move r2 COPPER
+move r3 GOLD
+move r4 SILICON
+move r5 LEAD
+move r6 SILVER
+move r7 COBALT
+move r8 NICKEL
+
+start:
+yield 
+#readdial:
+l r10 Dial Setting
+move r14 rr10
+s db Setting r14
+sb -128473777 Setting r14
+
+j start

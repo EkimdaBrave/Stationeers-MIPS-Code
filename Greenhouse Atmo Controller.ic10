@@ -1,0 +1,31 @@
+#Script: Greenhouse Atmo Controller
+# MossFrog
+# 2022-05-17 21:19:49
+
+alias ghSensor d0
+alias ghGasIn d1
+alias ghGasOut d2
+alias ghActiveIn d3
+alias ghActiveOut d4
+alias ghCO2PipeTemp d5
+
+define reqPressure 110
+define minCO2 0.80
+define maxTemp 293
+
+start:
+yield
+l r0 ghSensor RatioCarbonDioxide
+l r1 ghSensor Pressure
+l r3 ghCO2PipeTemp Temperature
+bgt r3 maxTemp start
+sle r0 r0 minCO2
+sle r1 r1 reqPressure
+or r2 r0 r1
+s ghGasIn On r2
+s ghActiveIn On r2
+sub r2 r2 1
+abs r2 r2
+s ghGasOut On r2
+s ghActiveOut On r2
+j start
