@@ -1,0 +1,36 @@
+# Ore Ice Requestor - goes with ore sorting and storage
+# for selecting 'x' from a silo
+# EkimdaBrave 
+# 2022-05-16 19:26:55
+alias Dial d0
+alias Button d1
+alias ICHOxite d2
+alias ICHVolatiles d3
+alias ICHWater d4 
+alias VendMem d5
+
+define OXITE -1805394113
+define VOLATILES 1253102035
+define WATER 1217489948
+
+init:
+move r0 OXITE
+move r1 VOLATILES
+move r2 WATER
+
+start:
+yield 
+readdial:
+l r10 Dial Setting
+
+
+move r14 rr10
+#s db Setting r14
+s d5 Setting r14
+s d2 Setting r14
+s d3 Setting r14
+s d4 Setting r14
+#sb -128473777 Setting r14
+
+j start
+

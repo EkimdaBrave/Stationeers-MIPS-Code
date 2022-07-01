@@ -1,0 +1,90 @@
+#Rocket Control thingy
+# CowsAreEvil
+# 2022-05-24 21:16:24
+alias fuelpump d0
+alias mode d1
+alias fuel d2
+alias minables d3
+alias cargo d4
+alias recall d5
+
+alias launchready r10
+
+define OREMINER -2027419821
+define ICEMINER 74521920
+define JUNKMINER -1446002463
+define GASMINER -1969723301
+define SILO 906210602
+define COMMAND 1556756312
+
+define MAXFUEL 5000
+define MINFUEL 700
+
+start:
+yield
+lb r0 COMMAND Mode Average
+brdns mode 2
+s mode Setting r0
+lb r0 COMMAND Fuel Average
+brdns fuel 2
+s fuel Setting r0
+slt r0 r0 MAXFUEL
+s fuelpump On r0
+seqz launchready r0
+lb r0 SILO Quantity Sum
+brdns cargo 2
+s cargo Setting r0
+sgtz r0 r0
+sb SILO Open r0
+seqz r0 r0
+and launchready launchready r0
+l r0 recall Setting
+and launchready launchready r0
+beqz launchready start
+
+sb COMMAND Activate 1
+travel:
+yield
+lb r0 COMMAND Fuel Average
+brdns fuel 2
+s fuel Setting r0
+lb r0 COMMAND Mode Average
+brdns mode 2
+s mode Setting r0
+bne r0 4 travel
+sb ICEMINER Activate 1
+sb OREMINER Activate 1
+sb GASMINER Activate 1
+sb JUNKMINER Activate 1
+mining:
+yield
+l r0 recall Setting
+beqz r0 return
+lb r0 SILO Quantity Sum
+brdns cargo 2
+s cargo Setting r0
+lb r0 COMMAND Fuel Average
+brdns fuel 2
+s fuel Setting r0
+blt r0 MINFUEL return
+lb r0 COMMAND CollectableGoods Average
+brdns minables 2
+s minables Setting r0
+bnez r0 mining
+sb COMMAND Activate 0
+yield
+sb COMMAND Activate 2
+j travel
+
+return:
+sb COMMAND Activate 5
+wait:
+yield
+lb r0 COMMAND Fuel Average
+brdns fuel 2
+s fuel Setting r0
+lb r0 COMMAND Mode Average
+brdns mode 2
+s mode Setting r0
+bnez r0 wait
+j start

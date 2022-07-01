@@ -1,0 +1,106 @@
+# Europa Dedicated Server - Recycler code
+# Author - TBA
+# 2022-07-02 11:25:50
+#ARC_Recycling control v0.1
+alias dUnloader d0
+alias dRecycler d1
+alias dSorter d2
+alias dARC d3 #for ARC
+alias dGasSensor d4 #for Active Vent
+alias dVent d5
+#alias dCentrifuge d2
+#alias dLever d3
+
+alias rCurrentHash r11
+alias rRoomPressure r10
+alias rErrorCode r12
+
+Init:
+s dVent On 1
+s dVent Mode 2
+s dARC On 1
+s db Setting -1
+s dSorter On 1
+s dSorter Mode 2
+s dSorter Output 0
+
+Start:
+jal _ActiveVentCtrl
+jal _ARCCtrl
+jal _PowerOnOff
+yield
+jal _IsOre
+j Start
+
+_PowerOnOff:
+#PowerOn
+ls r0 dUnloader 0 Occupied
+ls r1 dUnloader 1 Occupied
+or r0 r0 r1
+s dUnloader On r0
+ls r0 dRecycler 0 Occupied
+ls r1 dRecycler 1 Occupied
+or r0 r0 r1
+s dRecycler On r0
+ls r0 dSorter 0 Occupied
+ls r1 dSorter 1 Occupied
+ls r2 dSorter 2 Occupied
+or r0 r0 r1
+or r0 r0 r2
+s dSorter On r0
+j ra
+
+_IsOre:
+l r0 dSorter On
+beqz r0 ra
+ls r0 dSorter 0 Occupied
+beqz r0 ra
+ls rCurrentHash dSorter 0 OccupantHash
+
+seq r0 rCurrentHash 1758427767 #//Iron
+bnez r0 IsOreEnd
+seq r0 rCurrentHash -707307845 #//Copper
+bnez r0 IsOreEnd
+seq r0 rCurrentHash 1103972403 #//Silicon
+bnez r0 IsOreEnd
+seq r0 rCurrentHash -1348105509 #//Gold
+bnez r0 IsOreEnd
+seq r0 rCurrentHash -916518678 #//Silver
+bnez r0 IsOreEnd
+seq r0 rCurrentHash 1830218956 #//Nickel
+bnez r0 IsOreEnd
+seq r0 rCurrentHash -190236170 #//Lead
+bnez r0 IsOreEnd
+
+IsOreEnd:
+s db Setting rCurrentHash
+#select r0 r0 0 1
+s dSorter Output r0
+move rCurrentHash -1
+j ra
+
+_ActiveVentCtrl:
+l rRoomPressure dGasSensor Pressure
+sgt r0  rRoomPressure 1
+s dVent On r0
+j ra
+
+_ARCCtrl:
+l r0 dARC Activate
+bnez r0 ra
+ls r0 dARC 0 Occupied #Power On
+ls r1 dARC 1 Occupied #Power On
+or r0 r0 r1
+beqz r0 ARCCtrl_End
+s dARC On r0
+l r0 dARC On
+beqz r0 ra
+s dARC Activate r0
+sleep 1
+l r0 dARC Activate #state check
+select rErrorCode r0 0 -23 #Power Low -23
+s db Setting rErrorCode
+j ra
+ARCCtrl_End:
+s dARC On 0
+j ra

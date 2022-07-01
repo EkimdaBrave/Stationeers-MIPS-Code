@@ -1,0 +1,14 @@
+#Script: Water Temperature Controller
+#Author: MossFrog
+#2022-05-27 09:44:55
+alias waterTank d0
+define safeWaterTemp 293 #293K = 20C
+define liquidPipeHeaterHash -287495560
+
+start:
+yield
+l r0 waterTank Temperature
+slt r1 r0 safeWaterTemp
+sb liquidPipeHeaterHash On r1
+yield
+j start
