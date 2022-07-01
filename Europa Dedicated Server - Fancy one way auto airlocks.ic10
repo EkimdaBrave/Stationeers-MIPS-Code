@@ -1,0 +1,40 @@
+# Europa Dedicated Server - Fancy one way auto airlocks
+# Author - 
+# 2022-07-02 11:31:35 
+alias DoorNo d0
+alias DoorNc d1
+alias MotionSensor d2
+alias GasSensor d3
+alias InnVent d4
+alias OutVent d5
+define vent -1129453144
+sb vent Mode 1
+sb vent Lock 1
+s DoorNo Lock 1
+s DoorNc Lock 1
+NormalState:
+sb vent On 0
+s DoorNo Open 1
+s DoorNc Open 0
+yield
+l r0 MotionSensor Quantity
+beqz r0 NormalState
+Cycle1:
+s DoorNo Open 0
+s InnVent On 1
+yield
+l r0 GasSensor Pressure
+bgtz r0 Cycle1
+Empty:
+s DoorNc Open 1
+sb vent On 0
+yield
+l r0 MotionSensor Quantity
+bgtz r0 Empty
+Cycle2:
+s DoorNc Open 0
+s OutVent On 1
+yield
+l r0 GasSensor Pressure
+bgtz r0 Cycle2
+j NormalState
