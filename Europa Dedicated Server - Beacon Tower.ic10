@@ -1,0 +1,26 @@
+# Europa Dedicated Server - Beacon Tower
+# Author: <i forget - please take credit>
+# 2022-07-02 12:30:07
+
+define L0 555215790
+define L1 1847265835
+define L2 797794350
+define L3 -1860064656
+define beacon -188177083
+start:
+sb L0 On 1
+sb L1 On 0
+sb L2 On 0
+sb L3 On 0
+sb beacon Color 4
+sleep 1
+sb L1 On 1
+sb beacon Color 2
+sleep 1
+sb L2 On 1
+sb beacon Color 4
+sleep 1
+sb L3 On 1
+sb beacon Color 2
+sleep 1
+j start
