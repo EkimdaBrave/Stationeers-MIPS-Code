@@ -1,0 +1,132 @@
+# Europa Dedicated Server - Ore Sorting
+# Author: <please take credit>
+# 2022-07-02 12:34:00
+
+define sorter -1009150565
+define Leftstacker 1585641623
+define RightStacker -2020231820
+sb RightStacker Mode 0
+sb RightStacker Setting 50
+sb RightStacker On 1
+sb Leftstacker Mode 1
+sb Leftstacker Activate 0
+sb Leftstacker On 1
+sb sorter Lock 1
+sb sorter On 1
+sb sorter Lock 1
+sb sorter Mode 2
+alias Sort0 d0
+alias Sort1 d1
+alias Sort2 d2
+alias Sort3 d3
+alias Sort4 d4
+alias Sort5 d5
+define item0 1758427767 #iron
+define item1 -707307845 #copper
+define item2 -1348105509 #Gold
+define item3 -916518678 #silver
+define item4 -190236170 #lead
+define item5 1830218956 #Nickel
+jam:#check for jams
+sb sorter Output 0
+sleep 3
+sb sorter Output -1
+sleep 1
+move r0 0
+ls r1 d0 0 Occupied
+add r0 r0 r1
+ls r1 d1 0 Occupied
+add r0 r0 r1
+ls r1 d2 0 Occupied
+add r0 r0 r1
+ls r1 d3 0 Occupied
+add r0 r0 r1
+ls r1 d4 0 Occupied
+add r0 r0 r1
+ls r1 d5 0 Occupied
+add r0 r0 r1
+breqz r0 2
+j jam
+start:
+sb sorter Output -1
+#check if stack if populated
+move sp 1
+peek r0
+beqzal r0 prepwork
+preLoop: #wait for ore in stacker
+lb r0 Leftstacker Activate Sum
+bnez r0 preLoop
+lb r0 sorter Output Maximum
+bgez r0 preLoop
+sb Leftstacker Activate 1
+sb Leftstacker Activate 0
+
+loop2:
+yield
+ls r0 Sort0 0 PrefabHash
+s db Setting r0
+beqz r0 loop2
+jal orelookup #check what ore we have
+jal routePlanner #set destinations modes
+#wait for ore to flow
+cycle:
+sleep 1
+#check if got to destination
+lb r1 sorter Output Maximum
+bltz r1 reset
+j cycle
+prepwork:
+move sp 0
+push item0
+push 000001
+push item1
+push 000010
+push item2
+push 000100
+push item3
+push 001000
+push item4
+push 010000
+push item5
+push 100000
+j ra
+orelookup: #r0 should be set to prefab
+move r1 0
+move sp 0
+orelookuploop:
+mul sp r1 2
+add sp sp 1
+peek r3
+beq r3 r0 ra #return if match found
+add r1 r1 1
+brgt r1 5 2
+j orelookuploop
+move r3 0
+move sp 20
+j ra
+routePlanner:
+#sp is prefab, r1 is stack index
+add sp sp 1
+move r0 0 #set device we are looking at 0-5
+peek r1
+sb sorter Output -1
+routeLoop:
+mod r2 r1 10
+brdns dr0 2
+s dr0 Output r2
+bgtz r2 ra
+move r2 0
+div r1 r1 10
+trunc r1 r1
+add r0 r0 1
+blt r0 6 routeLoop
+j ra
+reset:
+move r0 0
+move r1 0
+move r2 0
+move r3 0
+move sp 0
+move ra 0
+s db Setting 0
+j start
