@@ -10,6 +10,7 @@ alias MadeDisp d4
 alias ResetButt d5
 
 init:
+alias Dumpy r0
 alias ItemsReq r1
 alias ItemsMade r2
 alias Reset r3
@@ -19,14 +20,20 @@ alias Pwr r6
 cleardials:
 s Stacker Setting 1
 reset:
+yield
 move ItemsMade 0
 s Stacker Activate 1
 s Machine Activate 0
 s Machine ClearMemory 1
 
 start:
+l Dumpy Machine Open
 l ItemsReq Stacker Setting
 s ReqDisp Setting ItemsReq
+
+# Dump Ores
+breqz Dumpy 2
+s Stacker Setting 1000
 
 #readbutton:
 l Reset ResetButt Setting
@@ -43,5 +50,7 @@ beq ItemsMade ItemsReq reset
 l Pwr PwrSW Setting
 s Machine On Pwr
 s Stacker On Pwr
+s ReqDisp On Pwr
+s MadeDisp On Pwr
 yield
 j start
